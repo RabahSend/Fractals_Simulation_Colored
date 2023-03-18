@@ -36,8 +36,7 @@ sf::Color hsvToRgb(double h, double s, double v) {
 }
 
 
-sf::Color isMandelbrot(std::complex<double> c) {
-    const size_t power = 2;
+sf::Color isMandelbrot(std::complex<double> c, const size_t power) {
     const size_t max_iterations = 500;
     std::complex<double> z = {0., 0.};
     size_t iteration_count = 0;
@@ -56,7 +55,7 @@ sf::Color isMandelbrot(std::complex<double> c) {
 }
 
 
-void draw(unsigned char* pixels, size_t dim, size_t start, size_t end) {
+void draw(unsigned char* pixels, size_t dim, size_t start, size_t end, const size_t power) {
 
     for (size_t i = start * dim; i < end * dim; ++i) {
 
@@ -64,7 +63,7 @@ void draw(unsigned char* pixels, size_t dim, size_t start, size_t end) {
         std::complex<double> c = {xCoord * 4. / dim - 2, yCoord * 4. / dim - 2};
         sf::Color color = {255, 255, 255, 255};
 
-        color = isMandelbrot(c);
+        color = isMandelbrot(c, power);
         
         size_t j = i * 4;
         pixels[j] = color.r;
@@ -87,17 +86,22 @@ void display_loading_bar(int& time_loading, std::string& sep) {
 }
 
 int main(int argc, char** argv) {
-    const size_t dimension = 800;
+    if (argc == 1) {
+        std::cout << "HELP : ./fractal dimension power" << std::endl;
+    }
+    else {
+    const size_t dimension = std::atoi(argv[1]);
+    const size_t power = std::atoi(argv[2]);
     const size_t size = dimension * dimension;
     std::string separator = "[                                    ]";
     int time_loading = 0;
 
     unsigned char* pixels = new unsigned char[size * 4];
     
-    std::thread t1(draw, pixels, dimension, 0, dimension/8),
-                t2(draw, pixels, dimension, dimension/8, dimension/4),
-                t3(draw, pixels, dimension, dimension/4, dimension/2),
-                t4(draw, pixels, dimension, dimension/2, dimension);
+    std::thread t1(draw, pixels, dimension, 0, dimension/8, power),
+                t2(draw, pixels, dimension, dimension/8, dimension/4, power),
+                t3(draw, pixels, dimension, dimension/4, dimension/2, power),
+                t4(draw, pixels, dimension, dimension/2, dimension, power);
     
     std::cout << "Creation of the fractal. . ." << std::endl;
 
@@ -148,6 +152,7 @@ int main(int argc, char** argv) {
     }
 
     delete[] pixels;
+    }
 
     return 0;
 }
