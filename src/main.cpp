@@ -36,8 +36,7 @@ sf::Color hsvToRgb(double h, double s, double v) {
 }
 
 
-sf::Color isMandelbrot(std::complex<double> c, const size_t power) {
-    const size_t max_iterations = 500;
+sf::Color isMandelbrot(std::complex<double> c, const size_t power, const size_t max_iterations) {
     std::complex<double> z = {0., 0.};
     size_t iteration_count = 0;
 
@@ -55,7 +54,8 @@ sf::Color isMandelbrot(std::complex<double> c, const size_t power) {
 }
 
 
-void draw(unsigned char* pixels, size_t dim, size_t start, size_t end, const size_t power) {
+void draw(unsigned char* pixels, size_t dim, size_t start, size_t end, const size_t power, 
+          const size_t max_iterations) {
 
     for (size_t i = start * dim; i < end * dim; ++i) {
 
@@ -63,7 +63,7 @@ void draw(unsigned char* pixels, size_t dim, size_t start, size_t end, const siz
         std::complex<double> c = {xCoord * 4. / dim - 2, yCoord * 4. / dim - 2};
         sf::Color color = {255, 255, 255, 255};
 
-        color = isMandelbrot(c, power);
+        color = isMandelbrot(c, power, max_iterations);
         
         size_t j = i * 4;
         pixels[j] = color.r;
@@ -86,22 +86,27 @@ void display_loading_bar(int& time_loading, std::string& sep) {
 }
 
 int main(int argc, char** argv) {
-    if (argc == 1) {
-        std::cout << "HELP : ./fractal dimension power" << std::endl;
+
+    if (argc != 4) {
+        std::cout << "HELP : ./fractal dimension power max_iterations" << std::endl;
+        return 0;
     }
-    else {
-    const size_t dimension = std::atoi(argv[1]);
-    const size_t power = std::atoi(argv[2]);
-    const size_t size = dimension * dimension;
+    
+    const size_t dimension = std::atoi(argv[1]),
+                 power = std::atoi(argv[2]),
+                 max_iterations = std::atoi(argv[3]),
+                 size = dimension * dimension;
+
     std::string separator = "[                                    ]";
     int time_loading = 0;
 
     unsigned char* pixels = new unsigned char[size * 4];
-    
-    std::thread t1(draw, pixels, dimension, 0, dimension/8, power),
-                t2(draw, pixels, dimension, dimension/8, dimension/4, power),
-                t3(draw, pixels, dimension, dimension/4, dimension/2, power),
-                t4(draw, pixels, dimension, dimension/2, dimension, power);
+
+    // Creation of a multi thread to improve the efficiency and the speed of the algorithm   
+    std::thread t1(draw, pixels, dimension, 0, dimension/8, power, max_iterations),
+                t2(draw, pixels, dimension, dimension/8, dimension/4, power, max_iterations),
+                t3(draw, pixels, dimension, dimension/4, dimension/2, power, max_iterations),
+                t4(draw, pixels, dimension, dimension/2, dimension, power, max_iterations);
     
     std::cout << "Creation of the fractal. . ." << std::endl;
 
@@ -152,7 +157,6 @@ int main(int argc, char** argv) {
     }
 
     delete[] pixels;
-    }
 
     return 0;
 }
