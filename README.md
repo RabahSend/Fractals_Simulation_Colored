@@ -4,7 +4,7 @@ _This is a Mandelbrot fractal simulator written in C++ for Linux. It generates f
 Requirements:
 
 - C++ compiler (tested with g++ 11.3.0)
-- [EZ-Draw++](http://eric.remy3.free.fr/EZ-Draw++/EZ-Draw++-1.2-6/html/index.html) library
+- [SFML](https://www.sfml-dev.org/index-fr.php) library
 - GNU Make (optional)
 
 ---
@@ -13,18 +13,17 @@ Requirements:
 
 To build the simulator, run ```make``` in the project directory. This will generate an executable file called ```fractal```. To run the simulator, execute ```./fractal``` with the following optional command-line arguments:
 
-- ```-p <power>``` : The power of the Mandelbrot fractal (default is 2)
-- ```-i <iterations>``` : Maximum number of iterations per pixel (default is 30)
+- ```<dimension>```: The dimension of the window
+- ```<power>``` : The power of the Mandelbrot fractal
+- ```<iterations>``` : Maximum number of iterations per pixel
 
 For example, To generate a mandelbrot fractal to the power of 2 with a maximum iteration of 80, here is the command to write :
 
-```./fractal -p 2 -i 80```
+```./fractal 600 2 100```
 
 The result should be:
 
 ![Example of a fractal](exampleFractal.png)
-
-You can quit the program with ```escape``` or the letter ```q```.
 
 For clean all compilation traces, you can run ```make clean```.
 
@@ -38,4 +37,4 @@ This project is licensed under the GPL License. See the LICENSE file for details
 
 ### Acknowledgements
 
-This project was inspired by the Mandelbrot set and the many great examples available online. Thanks to the EZ-Draw library for making it easy to create graphical applications in C++.
+This project was inspired by the Mandelbrot set and the many great examples available online.
