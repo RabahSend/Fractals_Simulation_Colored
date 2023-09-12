@@ -22,7 +22,7 @@ For example, To generate a mandelbrot fractal to the power of 2 with a maximum i
 
 The result should be:
 
-![Example of a fractal](/images/exampleFractal.png)
+![Example of a fractal](exampleFractal.png)
 
 You can quit the program with ```escape``` or the letter ```q```.
 
